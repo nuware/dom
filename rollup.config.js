@@ -4,7 +4,7 @@ import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
 
 const input = 'src/index.js'
-const external = ['@nuware/functions', '@nuware/lenses']
+const external = ['@nuware/functions', '@nuware/effect']
 
 const banner = `/**
  * DOM - ${pkg.description}
@@ -35,7 +35,7 @@ export default [{
   output: {
     file: pkg.browser,
     format: 'umd',
-    name: 'nuware.Emitter',
+    name: 'nuware.DOM',
     banner
   },
   plugins: [
@@ -47,7 +47,7 @@ export default [{
   output: {
     file: pkg.minimized,
     format: 'umd',
-    name: 'nuware.Emitter'
+    name: 'nuware.DOM'
   },
   plugins: [
     resolve(),

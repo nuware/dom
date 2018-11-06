@@ -1,18 +1,59 @@
 import {
-  K
+  compose
 } from '@nuware/functions'
 
-const Effect = f => ({
-  map: g => Effect(x => g(f(x))),
-  join: x => f(x),
-  chain: g => Effect(f).map(g).join(),
-  ap: m => m.map((g) => g(f())),
-  inspect: () => `Effect(${f})`
-})
+import Effect from '@nuware/effect'
 
-Effect.of = x => Effect(K(x))
+export const win = Effect.of(window)
+export const doc = Effect.of(document)
 
-// export const liftA2 = f => a => b => b.ap(a.map(f))
-// export const liftA3 = f => a => b => c => c.ap(b.ap(a.map(f)))
+// qi :: String -> Effect DOMElement
+export const qi = (id) => doc.map((x) => x.getElementById(id))
 
-export default Effect
+// qs :: String -> Effect DOMElement -> Effect DOMElement
+export const qs = (selector) => (eff) => eff.map((x) => x.querySelector(selector))
+
+// qa :: String -> Effect DOMElement -> Effect [DOMElement]
+export const qa = (selector) => (eff) => eff.map((x) => Array.from(x.querySelectorAll(selector)))
+
+// createElement :: String -> Effect DOMElement
+export const createElement = (tag) => doc.map((x) => x.createElement(tag))
+
+// createText :: String -> Effect DOMElement
+export const createText = (text) => doc.map((x) => x.createTextNode(text))
+
+// createFragment :: * -> Effect DocumentFragment
+export const createFragment = () => doc.map((x) => x.createDocumentFragment())
+
+// appendChild :: Node -> Node -> Node
+export const appendChild = (child) => (node) => {
+  return node.appendChild(child)
+}
+
+// removeChild :: Node -> Node -> null
+export const removeChild = (child) => (node) => {
+  let removed = node.removeChild(child)
+  removed = null // fix memory leaks
+  return removed
+}
+
+// removeChilds :: Node -> Node
+export const removeChilds = (node) => {
+  const cleanup = (node) => {
+    while (node.hasChildNodes()) {
+      cleanup(node.lastChild)
+    }
+    removeChild(node)(node.parentNode)
+  }
+
+  while (node.hasChildNodes()) {
+    cleanup(node.lastChild)
+  }
+
+  return node
+}
+
+// replaceWith :: Node -> Node -> Node
+export const replaceWith = (child) => (node) => {
+  return compose(appendChild(child), removeChilds)(node)
+}

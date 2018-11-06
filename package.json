@@ -37,7 +37,8 @@
     "rollup-plugin-terser": "^3.0.0"
   },
   "dependencies": {
-    "@nuware/functions": "^0.1.18"
+    "@nuware/functions": "^0.1.18",
+    "@nuware/effect": "^0.1.6"
   },
   "eslintConfig": {
     "extends": "standard",
