@@ -1,3 +1,5 @@
+/* globals window, document */
+
 import {
   compose
 } from '@nuware/functions'
@@ -56,4 +58,23 @@ export const removeChilds = (node) => {
 // replaceWith :: Node -> Node -> Node
 export const replaceWith = (child) => (node) => {
   return compose(appendChild(child), removeChilds)(node)
+}
+
+// setText :: String -> DOMElement -> DOMElement
+export const setText = (text = '') => (el) => {
+  return createText(text).chain(x => {
+    replaceWith(x)(el)
+    return el
+  })
+}
+
+// setHtml :: String -> DOMElement -> DOMElement
+export const setHtml = (html) => (el) => {
+  return createElement('template').map(t => {
+    t.innerHTML = html
+    return t.content.cloneNode(true)
+  }).map(x => {
+    replaceWith(x)(el)
+    return el
+  }).join()
 }
