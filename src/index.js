@@ -78,3 +78,7 @@ export const setHtml = (html) => (el) => {
     return el
   }).join()
 }
+
+export const defineElement = (tag) => (klass) => {
+  return win.chain(x => x.customElements.define(tag, klass))
+}
