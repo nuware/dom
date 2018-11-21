@@ -79,6 +79,10 @@ export const setHtml = (html) => (el) => {
   }).join()
 }
 
+// defineElement :: String -> Class -> Promise
 export const defineElement = (tag) => (klass) => {
-  return win.chain(x => x.customElements.define(tag, klass))
+  return win.chain(x => {
+    x.customElements.define(tag, klass)
+    return x.customElements.whenDefined(tag)
+  })
 }
